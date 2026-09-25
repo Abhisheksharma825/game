@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Prompt Heist — a natural-language browser game. Your words are your tools.">
+<title>Prompt Heist // AI Vault</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="toast" class="toast" aria-live="polite"></div>
+
+<section id="startScreen" class="screen start-screen">
+  <div class="grid-bg"></div><div class="scanlines"></div>
+  <div class="hero">
+    <div class="eyebrow">/// CLASSIFIED AI VAULT ///</div>
+    <h1>PROMPT<span>_</span>HEIST</h1>
+    <p class="tagline">The better your prompt, the deeper you get.</p>
+    <div class="briefing">
+      <div class="briefing-title">MISSION BRIEFING</div>
+      <p>You are infiltrating an adaptive AI vault. There are no command buttons for the important actions — <strong>your words are your tools.</strong></p>
+      <div class="prompt-flow" aria-label="Prompt interaction flow">
+        <span>PROMPT</span><b>→</b><span>INTERPRETATION</span><b>→</b><span>ACTION</span><b>→</b><span>WORLD CHANGES</span>
+      </div>
+    </div>
+    <button id="startBtn" class="primary-btn">INITIALIZE HEIST</button>
+    <div class="warning">⚠ Adaptive security active. Random actions increase alert.</div>
+  </div>
+</section>
+
+<section id="tutorialScreen" class="screen modal-screen hidden" aria-labelledby="tutorialTitle">
+  <div class="modal-card">
+    <div class="eyebrow">/// QUICK TUTORIAL ///</div>
+    <h2 id="tutorialTitle">Your words are your tools.</h2>
+    <p>Describe what you want naturally. The vault interprets your intent and changes the game world.</p>
+    <div class="tutorial-example"><span>YOU</span><strong>“Could you unlock the security door?”</strong><em>→ intent recognized → door opens</em></div>
+    <p class="muted">You do not need to memorize exact commands. Be specific, observe clues, and adapt.</p>
+    <button id="beginMissionBtn" class="primary-btn">ENTER VAULT</button>
+  </div>
+</section>
+
+<main id="gameScreen" class="game-screen hidden">
+<header class="topbar">
+  <div class="logo">PROMPT<span>_</span>HEIST</div>
+  <div class="top-status"><i></i><span id="topStatus">SYSTEM ONLINE</span></div>
+  <div class="top-actions"><button id="restartLevelBtn" class="ghost-btn">↻ RESTART LEVEL</button><button id="restartMissionBtn" class="ghost-btn danger-btn">RESTART MISSION</button></div>
+</header>
+<div class="game-layout">
+<aside class="sidebar">
+  <section class="panel status-panel">
+    <div class="panel-title">MISSION STATUS</div>
+    <div class="status-row"><span>LEVEL</span><strong id="currentLevel">01</strong></div>
+    <div class="status-row"><span>SECURITY</span><strong id="securityStatus">LOCKED</strong></div>
+    <div class="status-row"><span>CORE</span><strong id="coreStatus">SECURED</strong></div>
+  </section>
+  <section class="panel">
+    <div class="panel-title">SECURITY ALERT</div>
+    <div class="alert-head"><strong id="alertLabel">LOW</strong><span id="alertPercentage">0%</span></div>
+    <div class="meter"><div id="alertFill"></div></div>
+    <small id="alertMessage">Security systems are monitoring your activity.</small>
+  </section>
+  <section class="panel progress-panel">
+    <div class="panel-title">MISSION PROGRESS</div>
+    <div class="progress-item active" id="progress1"><b>01</b><span>SECURITY DOOR<small>Gain entry</small></span></div>
+    <div class="progress-line"></div>
+    <div class="progress-item" id="progress2"><b>02</b><span>LASER GRID<small>Disable defense</small></span></div>
+    <div class="progress-line"></div>
+    <div class="progress-item" id="progress3"><b>03</b><span>AI GUARD<small>Gain authorization</small></span></div>
+    <div class="progress-line"></div>
+    <div class="progress-item" id="progress4"><b>04</b><span>LOGIC VAULT<small>Resolve systems</small></span></div>
+    <div class="progress-line"></div>
+    <div class="progress-item" id="progress5"><b>05</b><span>DIGITAL CORE<small>Extract & escape</small></span></div>
+  </section>
+  <section class="panel objective-panel"><div class="panel-title">MISSION OBJECTIVE</div><p id="objectiveText">Gain entry through the encrypted security door.</p><button id="hintBtn" class="small-btn">◈ HINT</button></section>
+</aside>
+
+<section class="main-area">
+  <div class="level-head"><div><div class="level-kicker">LEVEL <span id="levelNumber">01</span></div><h2 id="levelTitle">SECURITY GATE</h2><p id="levelDescription">An encrypted door blocks the route into the vault.</p></div><div id="levelIcon" class="level-icon">◈</div></div>
+  <div id="world" class="world" aria-live="polite">
+    <div class="room-grid"></div>
+    <div id="doorVisual" class="door-visual"><div class="door-panel"><div class="lock-icon">⌁</div><b>SECURITY DOOR</b><small id="doorVisualStatus">ACCESS DENIED</small></div></div>
+    <div id="laserVisual" class="laser-visual hidden"><div class="laser l1"></div><div class="laser l2"></div><div class="laser l3"></div><div class="laser l4"></div><div class="laser-label">⚠ LASER GRID ACTIVE</div></div>
+    <div id="guardVisual" class="guard-visual hidden"><div class="guard-ring"><div class="guard-face"><i></i><i></i><b></b></div></div><small>AI SECURITY UNIT</small><strong>GUARD-01</strong><em id="guardState">AWAITING AUTHORIZATION</em></div>
+    <div id="logicVisual" class="logic-visual hidden"><div class="logic-title">LOGIC VAULT</div><div class="logic-nodes"><span>POWER</span><span>COOLING</span><span>LOCK</span><span>ALARM</span><span>DOOR</span></div></div>
+    <div id="coreVisual" class="core-visual hidden"><div class="core-orbit o1"></div><div class="core-orbit o2"></div><div class="core-gem">◆</div><b>DIGITAL CORE</b><small id="coreVisualStatus">LOCKED</small></div>
+    <div id="finalDoorVisual" class="final-door hidden">ESCAPE DOOR</div>
+  </div>
+
+  <div class="secondary-panels">
+    <section id="statePanel" class="mini-panel hidden"><div class="panel-title">SYSTEM STATE</div><div id="systemStateGrid" class="state-grid"></div></section>
+    <section id="cluePanel" class="mini-panel hidden"><div class="panel-title">VAULT CLUES</div><div id="clueText" class="clues"></div></section>
+  </div>
+
+  <section class="console-panel">
+    <div class="console-head"><span>COMMAND TERMINAL</span><span id="consoleStatus">● READY</span></div>
+    <div id="consoleOutput" class="console-output" role="log" aria-live="polite"></div>
+    <form id="commandForm" class="command-form"><label for="commandInput" class="sr-only">Enter natural-language prompt</label><span>&gt;_</span><input id="commandInput" autocomplete="off" placeholder="Describe what you want to do..." aria-label="Natural language command"><button type="submit">EXECUTE</button></form>
+    <div class="suggestions"><span>TRY:</span><button class="suggestion">open the door</button><button class="suggestion">disable the laser grid</button><button class="suggestion">ask the guard about the protocol</button></div>
+  </section>
+</section>
+</div>
+</main>
+
+<section id="resultsScreen" class="screen results-screen hidden">
+  <div class="success-burst"></div>
+  <div class="results-card">
+    <div class="success-mark">✓</div><div class="eyebrow">/// MISSION SUCCESS ///</div>
+    <h1>HEIST <span>COMPLETE</span></h1><p class="final-line">Your words were your tools.</p>
+    <div class="stats-grid">
+      <div><small>LEVELS COMPLETED</small><strong id="statLevels">5 / 5</strong></div>
+      <div><small>SUCCESSFUL PROMPTS</small><strong id="statSuccess">0</strong></div>
+      <div><small>FAILED PROMPTS</small><strong id="statFailed">0</strong></div>
+      <div><small>SECURITY ALERTS</small><strong id="statAlerts">0</strong></div>
+      <div><small>TIME TAKEN</small><strong id="statTime">00:00</strong></div>
+      <div><small>PROMPT INTELLIGENCE</small><strong id="statIntelligence">0</strong></div>
+    </div>
+    <button id="playAgainBtn" class="primary-btn">PLAY AGAIN</button>
+  </div>
+</section>
+
+<div id="confirmModal" class="modal-screen hidden"><div class="modal-card"><div class="eyebrow">/// CONFIRM ///</div><h2>Restart the mission?</h2><p>Current progress will be lost.</p><div class="modal-actions"><button id="cancelRestart" class="ghost-btn">CANCEL</button><button id="confirmRestart" class="primary-btn">RESTART</button></div></div></div>
+<script src="script.js"></script>
+</body></html>
