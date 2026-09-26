@@ -106,4 +106,4 @@ https://gamzyfy.netlify.app/
 Clone the repository:
 
 ```bash
-git clone https://github.com/Abhisheksharma825/gamzyfy.git
+git clone https://github.com/Abhisheksharma825/game.git
